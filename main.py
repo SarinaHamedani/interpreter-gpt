@@ -4,7 +4,11 @@ from langchain import hub
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_react_agent, AgentExecutor
 from langchain_experimental.agents.agent_toolkits import create_csv_agent
+from langchain_experimental.agents.agent_toolkits.pandas.base import create_pandas_dataframe_agent
 from langchain_experimental.tools import PythonREPLTool
+from langchain_core.tools import Tool
+import pandas as pd
+
 
 
 load_dotenv()
@@ -26,31 +30,46 @@ def main():
 
     tools = [PythonREPLTool()]
     python_agent = create_react_agent(
-        prompt=prompt,
-        llm=ChatOpenAI(temperature=0, model="gpt-4o-mini"),
-        tools=tools
+        prompt=prompt, llm=ChatOpenAI(temperature=0, model="gpt-4o-mini"), tools=tools
     )
     python_agent_executor = AgentExecutor(agent=python_agent, tools=tools, verbose=True)
-    python_agent_executor.invoke(
-        input={
-            "input": """generate and save in current working directory inside a folder called \"qrcodes\" 15 QRcodes 
-            that point to https://github.com/SarinaHamedani/SarinaHamedani.github.io, you have qrcode package already installed."""
-        }
-    )
+    
+    df = pd.read_csv("episode_info.csv")
 
-    csv_agent_executor: AgentExecutor = create_csv_agent(
+    csv_agent_executor: AgentExecutor = create_pandas_dataframe_agent(
         llm=ChatOpenAI(temperature=0, model="gpt-4o-mini"),
-        path="episode_info.csv",
+        df=df,
         verbose=True,
-        allow_dangerous_code=True
-    )
-    csv_agent_executor.invoke(
-        input={"input": "How many columns are there in file episode_info.csv"}
+        allow_dangerous_code=True,
     )
 
-    csv_agent_executor.invoke(
-        {"input": "Print the seasons by ascending order of the number of episodes they have."}
+    ################################### Router Grand Agent ###################################
+    tools = [
+        Tool(
+            name="Python Executor Agent",
+            func=python_agent_executor.invoke,
+            description="""Useful when you need to transform natural language to python and execute the python code, 
+            returning the resuls of the code execution
+            DOES NOT ACCEPT CODE AS INPUT
+            """,
+        ),
+        Tool(
+            name="CSV Agent",
+            func=csv_agent_executor.invoke,
+            description="""Useful when you need tyo answer question over episode_info.csv file,
+            takes an input the entire question and returns the answer after running pandas calculations
+            """,
+        ),
+    ]
+
+    prompt = base_prompt.partial(instructions="")
+    grand_agent = create_react_agent(
+        prompt=prompt, llm=ChatOpenAI(temperature=0, model="gpt-4o-mini"), tools=tools
     )
+
+    grand_agent_executor = AgentExecutor(agent=grand_agent, tools=tools, verbose=True)
+
+    print(grand_agent_executor.invoke({"input": "Which season has the most episodes"}))
 
 
 if __name__ == "__main__":
