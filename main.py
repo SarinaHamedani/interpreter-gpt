@@ -1,14 +1,16 @@
 import os
+from typing import Any, Dict
 from dotenv import load_dotenv
 from langchain import hub
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_react_agent, AgentExecutor
 from langchain_experimental.agents.agent_toolkits import create_csv_agent
-from langchain_experimental.agents.agent_toolkits.pandas.base import create_pandas_dataframe_agent
+from langchain_experimental.agents.agent_toolkits.pandas.base import (
+    create_pandas_dataframe_agent,
+)
 from langchain_experimental.tools import PythonREPLTool
 from langchain_core.tools import Tool
 import pandas as pd
-
 
 
 load_dotenv()
@@ -33,7 +35,10 @@ def main():
         prompt=prompt, llm=ChatOpenAI(temperature=0, model="gpt-4o-mini"), tools=tools
     )
     python_agent_executor = AgentExecutor(agent=python_agent, tools=tools, verbose=True)
-    
+
+    def python_agent_executor_wrapper(original_prompt: str) -> Dict[str, Any]:
+        return python_agent_executor.invoke({"input": original_prompt})
+
     df = pd.read_csv("episode_info.csv")
 
     csv_agent_executor: AgentExecutor = create_pandas_dataframe_agent(
@@ -47,7 +52,7 @@ def main():
     tools = [
         Tool(
             name="Python Executor Agent",
-            func=python_agent_executor.invoke,
+            func=python_agent_executor_wrapper,
             description="""Useful when you need to transform natural language to python and execute the python code, 
             returning the resuls of the code execution
             DOES NOT ACCEPT CODE AS INPUT
@@ -70,6 +75,14 @@ def main():
     grand_agent_executor = AgentExecutor(agent=grand_agent, tools=tools, verbose=True)
 
     print(grand_agent_executor.invoke({"input": "Which season has the most episodes"}))
+
+    print(
+        grand_agent_executor.invoke(
+            {
+                "input": 'generate and save in current working directory inside a folder called "qrcodes" 15 QRcodes that point to https://github.com/SarinaHamedani/SarinaHamedani.github.io, you have qrcode package already installed.'
+            }
+        )
+    )
 
 
 if __name__ == "__main__":
