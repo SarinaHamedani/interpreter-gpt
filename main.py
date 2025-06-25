@@ -38,17 +38,17 @@ def main():
         }
     )
 
-    csv_agent = create_csv_agent(
+    csv_agent_executor: AgentExecutor = create_csv_agent(
         llm=ChatOpenAI(temperature=0, model="gpt-4o-mini"),
         path="episode_info.csv",
         verbose=True,
         allow_dangerous_code=True
     )
-    csv_agent.invoke(
+    csv_agent_executor.invoke(
         input={"input": "How many columns are there in file episode_info.csv"}
     )
 
-    csv_agent.invoke(
+    csv_agent_executor.invoke(
         {"input": "Print the seasons by ascending order of the number of episodes they have."}
     )
 
