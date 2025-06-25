@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from langchain import hub
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_react_agent, AgentExecutor
+from langchain_experimental.agents.agent_toolkits import create_csv_agent
 from langchain_experimental.tools import PythonREPLTool
 
 
@@ -24,17 +25,31 @@ def main():
     prompt = base_prompt.partial(instructions=instructions)
 
     tools = [PythonREPLTool()]
-    agent = create_react_agent(
+    python_agent = create_react_agent(
         prompt=prompt,
         llm=ChatOpenAI(temperature=0, model="gpt-4o-mini"),
         tools=tools
     )
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-    agent_executor.invoke(
+    python_agent_executor = AgentExecutor(agent=python_agent, tools=tools, verbose=True)
+    python_agent_executor.invoke(
         input={
-            "input": """generate and save in current working directory 15 QRcodes 
+            "input": """generate and save in current working directory inside a folder called \"qrcodes\" 15 QRcodes 
             that point to https://github.com/SarinaHamedani/SarinaHamedani.github.io, you have qrcode package already installed."""
         }
+    )
+
+    csv_agent = create_csv_agent(
+        llm=ChatOpenAI(temperature=0, model="gpt-4o-mini"),
+        path="episode_info.csv",
+        verbose=True,
+        allow_dangerous_code=True
+    )
+    csv_agent.invoke(
+        input={"input": "How many columns are there in file episode_info.csv"}
+    )
+
+    csv_agent.invoke(
+        {"input": "Print the seasons by ascending order of the number of episodes they have."}
     )
 
 

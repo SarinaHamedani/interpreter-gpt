@@ -11,6 +11,8 @@ langchainhub = "*"
 langchain-openai = "*"
 qrcode = "*"
 langchain-experimental = "*"
+pandas = "*"
+tabulate = "*"
 
 [dev-packages]
 
