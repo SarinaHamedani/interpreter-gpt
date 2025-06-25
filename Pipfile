@@ -13,6 +13,7 @@ qrcode = "*"
 langchain-experimental = "*"
 pandas = "*"
 tabulate = "*"
+langchain-anthropic = "*"
 
 [dev-packages]
 

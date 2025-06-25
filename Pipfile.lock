@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "14f755d59c62bd92134caf7e339ed8de6ed9423e35871e9c3a49676c006b48a2"
+            "sha256": "5a62476e193e7e05f3838ba4af9169dcd34ae60356fb485d0e9e78ef659d4c56"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -131,6 +131,14 @@
             ],
             "markers": "python_version >= '3.8'",
             "version": "==0.7.0"
+        },
+        "anthropic": {
+            "hashes": [
+                "sha256:3518433fc0372a13f2b793b4cabecc7734ec9176e063a0f28dac19aa17c57f94",
+                "sha256:61826efa1bda0e4c7dc6f6a0d82b7d99b3fda970cd048d40ef5fca08a5eabd33"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==0.55.0"
         },
         "anyio": {
             "hashes": [
@@ -565,6 +573,15 @@
             "markers": "python_version >= '3.9'",
             "version": "==0.3.26"
         },
+        "langchain-anthropic": {
+            "hashes": [
+                "sha256:894d670bc44e68e0b1f2f09e7e7f977a8f07085a596f114c79aefbb789f6d88d",
+                "sha256:e62de2b0175c1fcca49fc4cc1f8742a4ab2385f0b94b7df4533fd06d577efd36"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.9'",
+            "version": "==0.3.15"
+        },
         "langchain-community": {
             "hashes": [
                 "sha256:49f9d71dc20bc42ccecd6875d02fafef1be0e211a0b22cecbd678f5fd3719487",
@@ -618,11 +635,11 @@
         },
         "langsmith": {
             "hashes": [
-                "sha256:19c4c40bbb6735cb1136c453b2edcde265ca5ba1b108b7e0e3583ec4bda28625",
-                "sha256:ae8ec403fb2b9cabcfc3b0c54556d65555598c85879dac83b009576927f7eb1d"
+                "sha256:2b1a3f889e134546dc5d67e23e5e8c6be5f91fd86827276ac874e3a25a04498a",
+                "sha256:51df086a9ae17ffa16538f52ef3bb8b3d85b0e52c84958980553cb6cadd9e565"
             ],
             "markers": "python_version >= '3.9'",
-            "version": "==0.4.1"
+            "version": "==0.4.2"
         },
         "marshmallow": {
             "hashes": [
